@@ -181,9 +181,9 @@ class SiteParserBase:
 		# Do not need to ZeroFill the manga name because this should be consistent 
 		# MangaFox already prepends the manga name
 		if isPrependMangaName:
-			manga_chapter_prefix = fixFormatting(self.manga) + '.' +  self.site + '.' + zeroFillStr(fixFormatting(self.chapters[current_chapter][1]), 3)
+			manga_chapter_prefix = fixFormatting(self.manga) + '.' +  self.site + '.' + fixFormatting(self.chapters[current_chapter][1]).zfill(3)
 		else:
-			manga_chapter_prefix = self.site + '.' + zeroFillStr(fixFormatting(self.chapters[current_chapter][1]), 3)
+			manga_chapter_prefix = self.site + '.' + fixFormatting(self.chapters[current_chapter][1]).zfill(3)
 
 		# we already have it
 		if os.path.exists(os.path.join(self.downloadPath, manga_chapter_prefix) + self.downloadFormat) and self.overwrite_FLAG == False:

@@ -42,7 +42,7 @@ class InvalidSite(Exception):
 
 
 def printLicenseInfo():
-    print( "\nProgram: Copyright (c) 2010. GPL v3 (http://www.gnu.org/licenses/gpl.html)." )
+    print( "\nProgram: Copyright (c) 2010-2012. GPL v3 (http://www.gnu.org/licenses/gpl.html)." )
     print( "Icon:      Copyright (c) 2006. GNU Free Document License v1.2 (Author:Kasuga)." )
     print( "           http://ja.wikipedia.org/wiki/%E5%88%A9%E7%94%A8%E8%80%85:Kasuga\n" )
 
