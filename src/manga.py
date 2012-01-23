@@ -23,9 +23,7 @@ import sys
 
 ##########
 from parsers.thread import SiteParserThread
-from util import fixFormatting, isImageLibAvailable
-from xmlparser import MangaXmlParser
-from outputManager.progressBarManager import progressBarManager
+from util import fixFormatting
 ##########
 
 VERSION = 'v0.8.8'
@@ -79,31 +77,9 @@ def main():
         dest='all_chapters_FLAG',
         help='Download all available chapters.')
 
-    parser.add_option('--convertDirectory',
-        action='store_true',
-        dest='convert_Directory',
-        help='Converts the image files stored in the directory specified by --inputDirectory. Stores the converted images in the directory specified by --outputDirectory')
-
-    parser.add_option('-c', '--convertFiles',
-        action='store_true',
-        dest='conversion_FLAG',
-        help='Converts downloaded files to a Format/Size acceptable to the device specified by the --device parameter.')
-
-    parser.add_option('--device',
-        dest='device',
-        help='Specifies the conversion device. Omitting this option default to %default.')
-
     parser.add_option('-d', '--directory',
         dest='downloadPath',
         help='The destination download directory.  Defaults to the directory of the script.')
-
-    parser.add_option('--inputDirectory',
-        dest='inputDir',
-        help='The directory containing the images to convert when --convertDirectory is specified.')
-
-    parser.add_option('--outputDirectory',
-        dest='outputDir',
-        help='The directory to store the images when --convertDirectory is specified.')
 
     parser.add_option('--overwrite',
         action='store_true',
@@ -114,19 +90,10 @@ def main():
         dest='maxChapterThreads',
         help='Limits the number of chapter threads to the value specified.')
 
-    parser.add_option('--timeLogging',
-        action='store_true',
-        dest='timeLogging_FLAG',
-        help='Output time logging.')
-
     parser.add_option('--verbose',
         action='store_true',
         dest='verbose_FLAG',
         help='Verbose Output.')
-
-    parser.add_option('-x', '--xml',
-        dest='xmlfile_path',
-        help='Parses the .xml file and downloads all chapters newer than the last chapter downloaded for the listed mangas.')
 
     parser.add_option('-z', '--zip',
         action='store_const',
@@ -144,84 +111,51 @@ def main():
     if options.maxChapterThreads <= 0:
         options.maxChapterThreads = 2
 
-if len(args) == 0 and ( not (options.convert_Directory or options.xmlfile_path is not None) ):
-    parser.error('Manga not specified.')
+    if len(args) == 0 and ( not (options.convert_Directory or options.xmlfile_path is not None) ):
+        parser.error('Manga not specified.')
 
-SetDownloadPathToName_Flag = False
-SetOutputPathToDefault_Flag = False
-if len(args) > 0:
-    # Default Directory is the ./MangaName
-    if options.downloadPath == 'DEFAULT_VALUE':
-        SetDownloadPathToName_Flag = True
+    SetDownloadPathToName_Flag = False
+    if len(args) > 0:
+        # Default Directory is the ./MangaName
+        if options.downloadPath == 'DEFAULT_VALUE':
+            SetDownloadPathToName_Flag = True
 
+    # Changes the working directory to the script location
+    if os.path.dirname(sys.argv[0]) != "":
+        os.chdir(os.path.dirname(sys.argv[0]))
 
-    # Default outputDir is the ./MangaName
-    if options.outputDir == 'DEFAULT_VALUE':
-        SetOutputPathToDefault_Flag = True
+    threadPool = []
+    for manga in args:
+        print( manga )
+        options.manga = manga
 
-PILAvailable = isImageLibAvailable()
+        if SetDownloadPathToName_Flag:
+            options.downloadPath = ('./' + fixFormatting(options.manga))
 
-# Check if PIL Library is available if either of convert Flags are set
-if (not PILAvailable) and (options.convert_Directory or options.conversion_FLAG):
-    print ("\nConversion Functionality Not available.\nMust install the PIL (Python Image Library)")
-    sys.exit()
-else:
-    if PILAvailable:
-        from ConvertPackage.ConvertFile import convertFile
+        options.downloadPath = os.path.realpath(options.downloadPath) + os.sep
 
-# Changes the working directory to the script location
-if os.path.dirname(sys.argv[0]) != "":
-    os.chdir(os.path.dirname(sys.argv[0]))
+        # site selection
+        print('\nWhich site?\n(1) MangaFox\n(2) OtakuWorks\n(3) MangaReader\n')
 
-options.outputMgr = progressBarManager()
-options.outputMgr.start()
-try:
-    if options.convert_Directory:
-        if options.outputDir == 'DEFAULT_VALUE':
-            options.outputDir = '.'
-        convertFile.convert(options.outputMgr, options.inputDir, options.outputDir, options.device,
-            options.verbose_FLAG)
+        # Python3 fix - removal of raw_input()
+        try:
+            site = raw_input()
+        except NameError:
+            site = input()
 
-    elif options.xmlfile_path is not None:
-        xmlParser = MangaXmlParser(options)
-        xmlParser.downloadManga()
-    else:
-        threadPool = []
-        for manga in args:
-            print( manga )
-            options.manga = manga
+        options.site = lookUpSiteCode(site)
 
-            if SetDownloadPathToName_Flag:
-                options.downloadPath = ('./' + fixFormatting(options.manga))
+        threadPool.append(SiteParserThread(options, None, None))
 
-            if SetOutputPathToDefault_Flag:
-                options.outputDir = options.downloadPath
+    for thread in threadPool:
+        thread.start()
+        thread.join()
 
-            options.downloadPath = os.path.realpath(options.downloadPath) + os.sep
-
-
-            # site selection
-            print('\nWhich site?\n(1) MangaFox\n(2) OtakuWorks\n(3) MangaReader\n')
-
-            # Python3 fix - removal of raw_input()
-            try:
-                site = raw_input()
-            except NameError:
-                site = input()
-
-            try:
-                options.site = siteDict[site]
-            except KeyError:
-                raise InvalidSite('Site selection invalid.')
-
-            threadPool.append(SiteParserThread(options, None, None))
-
-        for thread in threadPool:
-            thread.start()
-            thread.join()
-finally:
-    # Must always stop the manager
-    options.outputMgr.stop()
+def lookUpSiteCode(site):
+    try:
+        return siteDict[site]
+    except KeyError:
+        raise InvalidSite('Site selection invalid.')
 
 if __name__ == '__main__':
     main()
