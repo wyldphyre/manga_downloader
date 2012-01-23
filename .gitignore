@@ -14,3 +14,7 @@ src/__pycache__/
 .project
 .pydevproject
 
+# Intellij #
+############
+.idea/
+*.iml
