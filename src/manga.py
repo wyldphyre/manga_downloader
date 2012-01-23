@@ -42,11 +42,22 @@ class InvalidSite(Exception):
 
 
 def printLicenseInfo():
-    print( "\nProgram: Copyright (c) 2010-2012. GPL v3 (http://www.gnu.org/licenses/gpl.html)." )
-    print( "Icon:      Copyright (c) 2006. GNU Free Document License v1.2 (Author:Kasuga)." )
-    print( "           http://ja.wikipedia.org/wiki/%E5%88%A9%E7%94%A8%E8%80%85:Kasuga\n" )
+    print("\nProgram: Copyright (c) 2010-2012. GPL v3 (http://www.gnu.org/licenses/gpl.html).")
+    print("Icon:      Copyright (c) 2006. GNU Free Document License v1.2 (Author:Kasuga).")
+    print("           http://ja.wikipedia.org/wiki/%E5%88%A9%E7%94%A8%E8%80%85:Kasuga\n")
 
 ##########
+
+def isValidNumThreads(number):
+    return number.isdigit() and number > 0
+
+
+def lookUpSiteCode(site):
+    try:
+        return siteDict[site]
+    except KeyError:
+        raise InvalidSite('Site selection invalid.')
+
 
 def main():
     printLicenseInfo()
@@ -59,17 +70,10 @@ def main():
 
     parser.set_defaults(
         all_chapters_FLAG=False,
-        auto=False,
-        conversion_FLAG=False,
-        convert_Directory=False,
-        device='Kindle 3',
         downloadFormat='.cbz',
         downloadPath='DEFAULT_VALUE',
-        inputDir=None,
-        outputDir='DEFAULT_VALUE',
         overwrite_FLAG=False,
         verbose_FLAG=False,
-        timeLogging_FLAG=False,
         maxChapterThreads=3)
 
     parser.add_option('--all',
@@ -103,15 +107,10 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    try:
-        options.maxChapterThreads = int(options.maxChapterThreads)
-    except:
-        options.maxChapterThreads = 2
+    if not isValidNumThreads(options.maxChapterThreads):
+        options.maxChapterThreads = parser.defaults[maxChapterThreads]
 
-    if options.maxChapterThreads <= 0:
-        options.maxChapterThreads = 2
-
-    if len(args) == 0 and ( not (options.convert_Directory or options.xmlfile_path is not None) ):
+    if len(args) == 0:
         parser.error('Manga not specified.')
 
     SetDownloadPathToName_Flag = False
@@ -121,8 +120,7 @@ def main():
             SetDownloadPathToName_Flag = True
 
     # Changes the working directory to the script location
-    if os.path.dirname(sys.argv[0]) != "":
-        os.chdir(os.path.dirname(sys.argv[0]))
+    os.chdir(os.path.dirname(sys.argv[0]))
 
     threadPool = []
     for manga in args:
@@ -150,12 +148,6 @@ def main():
     for thread in threadPool:
         thread.start()
         thread.join()
-
-def lookUpSiteCode(site):
-    try:
-        return siteDict[site]
-    except KeyError:
-        raise InvalidSite('Site selection invalid.')
 
 if __name__ == '__main__':
     main()
