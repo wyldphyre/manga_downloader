@@ -35,7 +35,6 @@ class DownloadThread(threading.Thread):
     def run(self):
         try:
             self.siteParser.download()
-
         except Parser.MangaNotFound as Instance:
             print('Error: Manga (' + self.manga + ')')
             print(Instance)

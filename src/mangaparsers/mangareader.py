@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 
-####################################################################
-# For more detailed comments look at MangaFoxParser
-#
-# The code for this sites is similar enough to not need
-# explanation, but dissimilar enough to not warrant any further OOP
-####################################################################
-
 ####################
 
 import re
@@ -45,25 +38,10 @@ class MangaReader(Parser):
 	
 		for i in range(0, len(self.chapters)):
 			self.chapters[i] = ('http://www.mangareader.net%s' % self.chapters[i][0], '%s%s' % (self.chapters[i][1], self.chapters[i][2]))
-			if (not self.auto):
-				print('(%i) %s' % (i + 1, self.chapters[i][1]))
-			else:
-				if (self.lastDownloaded == self.chapters[i][1]):
-					lowerRange = i + 1
-		
-		# this might need to be len(self.chapters) + 1, I'm unsure as to whether python adds +1 to i after the loop or not
-		upperRange = len(self.chapters)
-						
-		if (not self.auto):
-			self.chapters_to_download = self.selectChapters(self.chapters)
-		else:
-			if (lowerRange == upperRange):
-				raise self.NoUpdates
-			
-			for i in range (lowerRange, upperRange):
-				self.chapters_to_download .append(i)
-		return 
-	
+			print('(%i) %s' % (i + 1, self.chapters[i][1]))
+
+		self.chapters_to_download = self.selectChapters(self.chapters)
+
 	def downloadChapter(self, downloadThread, max_pages, url, manga_chapter_prefix, current_chapter):
 		pageIndex = 0
 		for page in MangaReader.re_getPage.findall(getSourceCode(url)):

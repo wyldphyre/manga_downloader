@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 
-####################################################################
-# For more detailed comments look at MangaFoxParser
-#
-# The code for this sites is similar enough to not need
-# explanation, but dissimilar enough to not warrant any further OOP
-####################################################################
-
 ####################
 
 import re
