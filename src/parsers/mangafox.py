@@ -88,33 +88,14 @@ class MangaFox(SiteParserBase):
 			self.chapters = re_getChapters.findall(source)
 			self.chapters.reverse()
 			
-			# code used to both fix URL from relative to absolute as well as verify last downloaded chapter for XML component
-			lowerRange = 0
-		
 			for i in range(0, len(self.chapters)):
 				#print("%s %s" % (self.chapters[i][0], self.chapters[i][1]))
 				self.chapters[i] = ('http://www.mangafox.com/manga/%s/%s/%s' % (keyword, self.chapters[i][0], self.chapters[i][1]), self.chapters[i][0] + "." + self.chapters[i][1])
-				if (not self.auto):
-					print('(%i) %s' % (i + 1, self.chapters[i][1]))
-				else:
-					if (self.lastDownloaded == self.chapters[i][1]):
-						lowerRange = i + 1
+				print('(%i) %s' % (i + 1, self.chapters[i][1]))
 
-			# this might need to be len(self.chapters) + 1, I'm unsure as to whether python adds +1 to i after the loop or not
-			upperRange = len(self.chapters)
-			
 			# which ones do we want?
-			if (not self.auto):
-				self.chapters_to_download = self.selectChapters(self.chapters)
-			# XML component
-			else:
-				if ( lowerRange == upperRange):
-					raise self.NoUpdates
-				
-				for i in range (lowerRange, upperRange):
-					self.chapters_to_download.append(i)
-			return 		
-	
+			self.chapters_to_download = self.selectChapters(self.chapters)
+
 	def downloadChapter(self, downloadThread, max_pages, url, manga_chapter_prefix, current_chapter):
 		for page in range(1, max_pages + 1):
 			if (self.verbose_FLAG):

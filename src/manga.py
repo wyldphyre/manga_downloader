@@ -48,9 +48,37 @@ def printLicenseInfo():
 
 ##########
 
+# Changes the working directory to the script location
+def changeWorkingDirectory():
+    os.chdir(
+        os.path.dirname(
+            os.path.realpath(
+                sys.argv[0])))
+
+def download(options, titles):
+    threadPool = []
+    for title in titles:
+        print(title)
+        options.manga = title
+
+        if options.downloadPath == '<default>':
+            options.downloadPath = ('./' + fixFormatting(options.manga))
+
+        options.downloadPath = os.path.realpath(options.downloadPath) + os.sep
+
+        # site selection
+        print('\nWhich site?\n(1) MangaFox\n(2) OtakuWorks\n(3) MangaReader\n')
+
+        site = raw_input()
+        options.site = lookUpSiteCode(site)
+
+        SiteParserThread(options, None, None).start()
+
+def isMangaSpecified(args):
+    return len(args) > 0
+
 def isValidNumThreads(number):
     return number.isdigit() and number > 0
-
 
 def lookUpSiteCode(site):
     try:
@@ -58,10 +86,7 @@ def lookUpSiteCode(site):
     except KeyError:
         raise InvalidSite('Site selection invalid.')
 
-
-def main():
-    printLicenseInfo()
-
+def setupArgumentParser():
     # for easier parsing, adds free --help and --version
     # optparse (v2.3-v2.7) was chosen over argparse (v2.7+) for compatibility (and relative similarity) reasons
     # and over getopt(v?) for additional functionality
@@ -71,7 +96,7 @@ def main():
     parser.set_defaults(
         all_chapters_FLAG=False,
         downloadFormat='.cbz',
-        downloadPath='DEFAULT_VALUE',
+        downloadPath='<default>',
         overwrite_FLAG=False,
         verbose_FLAG=False,
         maxChapterThreads=3)
@@ -105,45 +130,32 @@ def main():
         const='.zip',
         help='Downloads using .zip compression.  Omitting this option defaults to %default.')
 
-    (options, args) = parser.parse_args()
+    return parser
+
+def main():
+    printLicenseInfo()
+
+    parser = setupArgumentParser()
+
+    (options, titles) = parser.parse_args()
 
     if not isValidNumThreads(options.maxChapterThreads):
-        options.maxChapterThreads = parser.defaults[maxChapterThreads]
+        parser.error('Invalid number of threads.')
+    else:
+        options.maxChapterThreads = int(options.maxChapterThreads)
 
-    if len(args) == 0:
+    if not isMangaSpecified(titles):
         parser.error('Manga not specified.')
 
     SetDownloadPathToName_Flag = False
-    if len(args) > 0:
+    if len(titles) > 0:
         # Default Directory is the ./MangaName
         if options.downloadPath == 'DEFAULT_VALUE':
             SetDownloadPathToName_Flag = True
 
-    # Changes the working directory to the script location
-    os.chdir(os.path.dirname(sys.argv[0]))
+    changeWorkingDirectory()
 
-    threadPool = []
-    for manga in args:
-        print( manga )
-        options.manga = manga
-
-        if SetDownloadPathToName_Flag:
-            options.downloadPath = ('./' + fixFormatting(options.manga))
-
-        options.downloadPath = os.path.realpath(options.downloadPath) + os.sep
-
-        # site selection
-        print('\nWhich site?\n(1) MangaFox\n(2) OtakuWorks\n(3) MangaReader\n')
-
-        site = raw_input()
-
-        options.site = lookUpSiteCode(site)
-
-        threadPool.append(SiteParserThread(options, None, None))
-
-    for thread in threadPool:
-        thread.start()
-        thread.join()
+    download(options, titles)
 
 if __name__ == '__main__':
     main()
