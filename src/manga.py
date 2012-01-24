@@ -135,11 +135,7 @@ def main():
         # site selection
         print('\nWhich site?\n(1) MangaFox\n(2) OtakuWorks\n(3) MangaReader\n')
 
-        # Python3 fix - removal of raw_input()
-        try:
-            site = raw_input()
-        except NameError:
-            site = input()
+        site = raw_input()
 
         options.site = lookUpSiteCode(site)
 

@@ -5,7 +5,6 @@
 import gzip
 import io
 import random
-import re
 import string
 import time
 ###################
@@ -33,7 +32,7 @@ def fixFormatting(s):
     """
 
     for i in string.punctuation:
-        if(i != '-' and i != '.'):
+        if i != '-' and i != '.':
             s = s.replace(i, '')
     return s.lower().lstrip('.').strip().replace(' ', '.')
 
@@ -49,12 +48,12 @@ def getSourceCode(url, maxRetries=5, waitRetryTime=5):
     request = urllib2.Request(url, headers=urlReqHeaders)
     numTries = 0
 
-    while (ret == None):
+    while ret is None:
         try:
             response = urllib2.urlopen(request)
             encoding = response.headers.get('Content-Encoding')
 
-            if encoding == None:
+            if encoding is None:
                 ret = response.read()
             else:
                 if encoding.upper() == 'GZIP':
@@ -64,7 +63,7 @@ def getSourceCode(url, maxRetries=5, waitRetryTime=5):
                 else:
                     raise FatalError('Unknown HTTP Encoding returned')
         except urllib2.URLError:
-            if (numTries == maxRetries):
+            if numTries == maxRetries:
                 break
             else:
                 # random dist. for further protection against anti-leech

@@ -8,7 +8,6 @@ import re
 import shutil
 import tempfile
 import threading
-import time
 import zipfile
 
 #####################
@@ -36,15 +35,6 @@ class SiteParserBase:
 		def __str__(self):
 			return self.errorMsg
 	
-	# XML file config reports nothing to do
-	class NoUpdates(Exception):
-
-		def __init__(self, errorMsg=''):
-			self.errorMsg = 'No updates. %s' % errorMsg
-
-		def __str__(self):
-			return self.errorMsg
-		
 #####
 
 	def __init__(self,optDict):
@@ -168,9 +158,7 @@ class SiteParserBase:
 				pass
 			else:
 				break
-		if (not self.verbose_FLAG):
-			self.outputMgr.updateOutputObj( downloadThread.outputIdx )
-	
+
 	def processChapter(self, downloadThread, current_chapter, isPrependMangaName=True):
 		"""
 		Calculates prefix for filenames, creates download directory if
@@ -191,8 +179,6 @@ class SiteParserBase:
 			return
 
 		SiteParserBase.DownloadChapterThread.acquireSemaphore()
-		if (self.timeLogging_FLAG):
-			print(manga_chapter_prefix + " (Start Time): " + str(time.time()))
 		# get the URL of the chapter homepage
 		url = self.chapters[current_chapter][0]
 		
@@ -271,9 +257,7 @@ class SiteParserBase:
 			proposedName = (elem[1].decode('utf-8')).lower()
 			
 			if actualName in proposedName:
-				# manual mode
-				if (not self.auto):
-					print(elem[1])
+				print(elem[1])
 				
 				# exact match
 				if proposedName == actualName:
@@ -281,17 +265,15 @@ class SiteParserBase:
 					keyword = elem[0]
 					found = True
 					break
-				else:
-					# only request input in manual mode
-					if (not self.auto):
-						print('Did you mean: %s? (y/n)' % elem[1])
-						answer = raw_input();
-	
-						if (answer == 'y'):
-							self.manga = elem[1]
-							keyword = elem[0]
-							found = True
-							break
+                else:
+                    print('Did you mean: %s? (y/n)' % elem[1])
+                    answer = raw_input()
+
+                    if (answer == 'y'):
+                        self.manga = elem[1]
+                        keyword = elem[0]
+                        found = True
+                        break
 		if (not found):
 			raise self.MangaNotFound('No strict match found. Check query.')
 		return keyword
@@ -374,17 +356,3 @@ class SiteParserBase:
 
 		SiteParserBase.DownloadChapterThread.releaseSemaphore()
 		compressedFile = self.compress(manga_chapter_prefix, max_pages)
-		self.convertChapter( compressedFile )	
-	
-	def convertChapter(self, compressedFile):
-		# Check if the conversion flag is set
-		if ( self.conversion_FLAG ):
-			if (not isImageLibAvailable()):
-				print("PIL (Python Image Library) not available.")
-			else:	
-				from ConvertPackage.ConvertFile import convertFile
-				if (self.verbose_FLAG):
-					print ("Compressed File "+str(compressedFile))							
-				
-				if (compressedFile != None and self.outputDir != None):
-					convertFile.convert(self.outputMgr, compressedFile, self.outputDir, self.device, self.verbose_FLAG)
