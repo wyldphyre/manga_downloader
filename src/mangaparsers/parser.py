@@ -128,8 +128,6 @@ class Parser:
                     print("Image URL: %s" % img_url)
             except AttributeError:
                 if (maxRetries == 0):
-                    if (not self.verbose_FLAG):
-                        self.outputMgr.updateOutputObj( downloadThread.outputIdx )
                     return
                 else:
                     # random dist. for further protection against anti-leech
@@ -189,9 +187,6 @@ class Parser:
         source = getSourceCode(url)
 
         max_pages = int(self.__class__.re_getMaxPages.search(source).group(1))
-
-        if (not self.verbose_FLAG):
-            downloadThread.outputIdx = self.outputMgr.createOutputObj(manga_chapter_prefix, max_pages)
 
         self.downloadChapter(downloadThread, max_pages, url, manga_chapter_prefix, current_chapter)
 

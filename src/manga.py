@@ -147,12 +147,6 @@ def main():
     if not isMangaSpecified(titles):
         parser.error('Manga not specified.')
 
-    SetDownloadPathToName_Flag = False
-    if len(titles) > 0:
-        # Default Directory is the ./MangaName
-        if options.downloadPath == 'DEFAULT_VALUE':
-            SetDownloadPathToName_Flag = True
-
     changeWorkingDirectory()
 
     download(options, titles)
