@@ -6,14 +6,13 @@ import threading
 import os
 #####################
 
-from parsers.base import SiteParserBase
-from parsers.factory import SiteParserFactory
+from mangaparsers.parser import Parser
+from mangaparsers.factory import SiteParserFactory
 
 #####################
 
-class SiteParserThread( threading.Thread ):
-
-    def __init__ ( self, optDict, dom, node ):
+class DownloadThread(threading.Thread):
+    def __init__(self, optDict):
         threading.Thread.__init__(self)
 
         for elem in vars(optDict):
@@ -33,12 +32,12 @@ class SiteParserThread( threading.Thread ):
             raise
         print('\n')
 
-    def run (self):
+    def run(self):
         try:
             self.siteParser.download()
 
-        except SiteParserBase.MangaNotFound as Instance:
-            print("Error: Manga ("+self.manga+")")
+        except Parser.MangaNotFound as Instance:
+            print('Error: Manga (' + self.manga + ')')
             print(Instance)
             print("\n")
             return

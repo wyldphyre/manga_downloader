@@ -7,12 +7,12 @@ import string
 
 #####################
 
-from parsers.base import SiteParserBase
+from mangaparsers.parser import Parser
 from util import fixFormatting, getSourceCode
 
 #####################
 
-class MangaFox(SiteParserBase):
+class MangaFox(Parser):
 	re_getSeries = re.compile('a href="http://www.mangafox.com/manga/([^/]*)/[^"]*?" class=[^>]*>([^<]*)</a>')
 	#re_getSeries = re.compile('a href="/manga/([^/]*)/[^"]*?" class=[^>]*>([^<]*)</a>')
 	#re_getChapters = re.compile('"(.*?Ch.[\d.]*)[^"]*","([^"]*)"')

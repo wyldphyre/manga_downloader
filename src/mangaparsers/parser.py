@@ -12,10 +12,7 @@ import zipfile
 
 #####################
 
-try:
-    import urllib
-except ImportError:
-    import urllib.parse as urllib
+import urllib
 
 #####################
 
@@ -23,7 +20,7 @@ from util import *
 
 #####################
 
-class SiteParserBase:
+class Parser:
 
 #####	
     # typical misspelling of title and/or manga removal
@@ -178,7 +175,7 @@ class SiteParserBase:
             print(self.chapters[current_chapter][1] + ' already downloaded, skipping to next chapter...')
             return
 
-        SiteParserBase.DownloadChapterThread.acquireSemaphore()
+        Parser.DownloadChapterThread.acquireSemaphore()
         # get the URL of the chapter homepage
         url = self.chapters[current_chapter][0]
 
@@ -286,7 +283,6 @@ class SiteParserBase:
             self.siteParser = siteParser
             self.chapter = chapter
             self.isThreadFailed = False
-            self.outputIdx = -1
 
         @staticmethod
         def initSemaphore(value):
@@ -328,7 +324,7 @@ class SiteParserBase:
     def download(self):
         threadPool = []
         isAllPassed = True
-        SiteParserBase.DownloadChapterThread.initSemaphore(self.maxChapterThreads)
+        Parser.DownloadChapterThread.initSemaphore(self.maxChapterThreads)
         if (self.verbose_FLAG):
             print("Number of Threads: %d " % self.maxChapterThreads)
         """
@@ -336,7 +332,7 @@ class SiteParserBase:
         """
 
         for current_chapter in self.chapters_to_download:
-            thread = SiteParserBase.DownloadChapterThread(self, current_chapter)
+            thread = Parser.DownloadChapterThread(self, current_chapter)
             threadPool.append(thread)
             thread.start()
 
@@ -351,5 +347,5 @@ class SiteParserBase:
         return isAllPassed
 
     def postDownloadProcessing(self, manga_chapter_prefix, max_pages):
-        SiteParserBase.DownloadChapterThread.releaseSemaphore()
+        Parser.DownloadChapterThread.releaseSemaphore()
         compressedFile = self.compress(manga_chapter_prefix, max_pages)

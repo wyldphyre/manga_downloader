@@ -13,12 +13,12 @@ import re
 
 #####################
 
-from parsers.base import SiteParserBase
+from mangaparsers.parser import Parser
 from util import fixFormatting, getSourceCode
 
 #####################
 
-class OtakuWorks(SiteParserBase):
+class OtakuWorks(Parser):
 	
 	re_getMangas = re.compile('a href="([^"]*?)"[^>]*?>([^<]*?) \(Manga\)')
 	re_getImage = re.compile('img src="(http://static.otakuworks.net/viewer/[^"]*)"')

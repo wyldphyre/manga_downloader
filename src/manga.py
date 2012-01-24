@@ -22,7 +22,7 @@ import os
 import sys
 
 ##########
-from parsers.thread import SiteParserThread
+from mangaparsers.thread import DownloadThread
 from util import fixFormatting
 ##########
 
@@ -72,7 +72,7 @@ def download(options, titles):
         site = raw_input()
         options.site = lookUpSiteCode(site)
 
-        SiteParserThread(options, None, None).start()
+        DownloadThread(options).start()
 
 def isMangaSpecified(args):
     return len(args) > 0

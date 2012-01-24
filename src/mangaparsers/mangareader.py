@@ -13,12 +13,12 @@ import re
 
 #####################
 
-from parsers.base import SiteParserBase
+from mangaparsers.parser import Parser
 from util import getSourceCode
 
 #####################
 
-class MangaReader(SiteParserBase):
+class MangaReader(Parser):
 
 	re_getSeries = re.compile('<li><a href="([^"]*)">([^<]*)</a>')
 	re_getChapters = re.compile('<a href="([^"]*)">([^<]*)</a>([^<]*)</td>')

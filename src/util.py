@@ -17,8 +17,10 @@ except ImportError:
 ####################
 
 # overwrite user agent for spoofing, enable GZIP
-urlReqHeaders = {'User-agent': """Mozilla/5.0 (X11; U; Linux i686; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.14 Safari/534.3""",
-                 'Accept-encoding': 'gzip'}
+urlReqHeaders = {
+    'User-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'
+    ,
+    'Accept-encoding': 'gzip'}
 
 ####################
 
@@ -44,22 +46,22 @@ def getSourceCode(url, maxRetries=5, waitRetryTime=5):
     Loops to get around server denies for info or minor disconnects.
     """
 
-    ret = None
+    sourceCode = None
     request = urllib2.Request(url, headers=urlReqHeaders)
     numTries = 0
 
-    while ret is None:
+    while sourceCode is None:
         try:
             response = urllib2.urlopen(request)
             encoding = response.headers.get('Content-Encoding')
 
             if encoding is None:
-                ret = response.read()
+                sourceCode = response.read()
             else:
                 if encoding.upper() == 'GZIP':
-                    compressedstream = io.BytesIO(response.read())
-                    gzipper = gzip.GzipFile(fileobj=compressedstream)
-                    ret = gzipper.read()
+                    compressedStream = io.BytesIO(response.read())
+                    gzipper = gzip.GzipFile(fileobj=compressedStream)
+                    sourceCode = gzipper.read()
                 else:
                     raise FatalError('Unknown HTTP Encoding returned')
         except urllib2.URLError:
@@ -71,4 +73,4 @@ def getSourceCode(url, maxRetries=5, waitRetryTime=5):
                 time.sleep(random.uniform(0.5 * waitRetryTime, 1.5 * waitRetryTime))
                 numTries += 1
 
-    return ret
+    return sourceCode
