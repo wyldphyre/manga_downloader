@@ -18,13 +18,9 @@ class SiteParserFactory():
 			'[mf]'        : MangaFox,
 			'[mr]'        : MangaReader,
 			'[ow]'        : OtakuWorks,
-			'MangaFox'    : MangaFox,
-			'MangaReader' : MangaReader,
-			'OtakuWorks'  : OtakuWorks
-			
 		}.get(options.site, None)
 		
 		if not ParserClass:
-			raise NotImplementedError( "Site Not Supported" )
+			raise NotImplementedError('Site not supported.')
 		
 		return ParserClass(options)

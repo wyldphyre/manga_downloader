@@ -1,15 +1,12 @@
 h1. Manga-Downloader
 
-Manga-Downloader is a cross-platform Windows/Mac/Linux Python 2/3 script.
-It can be automated via an external .xml file, and can convert images for viewing on the Kindle.
+Manga-Downloader is a cross-platform Windows/Mac/Linux Python 2.6+ script.
 Currently supports mangafox.com, mangareader.net, and otakuworks.com, with a total of over 5000 mangas.
 Downloads into .cbz format, can optionally download into .zip instead.
 
 h2. Dependencies
 
-Python 2.6+, including 3.x
-
-PIL if using Kindle conversion.
+Python 2.6+, excluding 3.x
 
 How to backport to:
 2.5 - change the exception-handling code and use StringIO instead of io module
@@ -41,28 +38,8 @@ Limits the number of chapter threads to the user specified value. Default value 
 @--verbose@
 Verbose output.
 
-@-x <xmlfile path>, --xml=<xmlfile path>@
-Parses the .xml file and downloads all chapters newer than the last chapter downloaded for the listed mangas.
-
 @-z, --zip@
 Downloads using .zip compression.  Omitting this option defaults to .cbz.
-
-@-c, --convertFiles@
-Converts the files that are downloaded to a Format/Size ratio acceptable to the device specified by the device
-parameter. The converted images are saved in the directory specified by the outputDirectory paraemter.
-
-@--device@
-Specifies the target device for the image conversion.
-
-@--convertDirectory@
-Converts the image files stored in the directory specified by the inputDirectory parameter. Stores the images
-in the directory specified by the outputDirectory Parameter
-
-@--inputDirectory@
-The directory containing the images to covert when convertDirectory is specified. 
-
-@--outputDirectory@
-The directory to store the converted Images. Omitting this option defaults to DOWNLOAD_PATH/Pictures. 
 
 The script will offer a choice of 3 manga sites, it will default to the first upon pressing 'enter'.
 After selecting a site, the script will output a list of all chapters of the series it has found on the site you selected.  
@@ -74,7 +51,7 @@ h3. Notes
 
 Usage examples:
 
-@manga.py -d "C:\Documents and Settings\admin\Documents\Manga\" -z Bleach@
+@python manga.py -d "C:\Documents and Settings\admin\Documents\Manga\" -z Bleach@
 On a Windows machine, downloads 'Bleach' to C:\Documents and Settings\admin\Documents\Manga\, using .zip compression.
 
 @./manga.py --overwrite Bleach@
@@ -86,17 +63,13 @@ Downloads chapters 1, 2, and 9 through 12
 @all@
 Downloads all chapters
 
-@./manga.py -x example.xml@
-Parses example.xml to run the script.
- 
 h2. Bugs
 
 * Input between the two prompts "Which site?" and "Download which chapters?" is queued up for chapter selection.
 
 h2. Issues
 
-* Careful! MangaFox sometimes leaves up invalid chapters that it has marked for deletion.  Be suspicious of out-of-order chapters if they appear.
-* The script can be a bandwidth hog when downloading a lot of manga chapters and @--threads@ is set to a large number. 
+* The script can be a bandwidth hog when downloading a lot of manga chapters and @--threads@ is set to a large number.
 * UNICODE characters have caused the script issues in the past. If a UNICODE issue is found, create a new issue under the Issue tab and 
 * provided a detailed description of the issue. 
 

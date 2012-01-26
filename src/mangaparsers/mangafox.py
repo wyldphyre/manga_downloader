@@ -14,8 +14,6 @@ from util import fixFormatting, getSourceCode
 
 class MangaFox(Parser):
     re_getSeries = re.compile('a href="http://www.mangafox.com/manga/([^/]*)/[^"]*?" class=[^>]*>([^<]*)</a>')
-    #re_getSeries = re.compile('a href="/manga/([^/]*)/[^"]*?" class=[^>]*>([^<]*)</a>')
-    #re_getChapters = re.compile('"(.*?Ch.[\d.]*)[^"]*","([^"]*)"')
     re_getImage = re.compile('"><img src="([^"]*)"')
     re_getMaxPages = re.compile('var total_pages=([^;]*?);')
 
