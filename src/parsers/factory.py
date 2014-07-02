@@ -4,8 +4,9 @@
 
 from parsers.mangafox import MangaFox
 from parsers.mangareader import MangaReader
+from parsers.otakuworks import OtakuWorks
 from parsers.mangapanda import MangaPanda
-from parsers.mangahere import MangaHere
+from parsers.batoto import Batoto
 
 #####################
 
@@ -18,12 +19,14 @@ class SiteParserFactory():
 		ParserClass = {
 				'[mf]'        : MangaFox,
 				'[mr]'        : MangaReader,
+				'[ow]'        : OtakuWorks,
 				'[mp]'        : MangaPanda,
-				'[mh]'        : MangaHere, 
+			        '[bt]'        : Batoto,
 				'MangaFox'    : MangaFox,
 				'MangaReader' : MangaReader,
+				'OtakuWorks'  : OtakuWorks,
 				'MangaPanda'  : MangaPanda,
-				'MangaHere'   : MangaHere
+			        'Batoto'      : Batoto,
 
 				}.get(options.site, None)
 

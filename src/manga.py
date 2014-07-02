@@ -20,12 +20,6 @@
 import optparse
 import os
 import sys
-try:
-  import socks
-  NO_SOCKS = False
-except ImportError:
-  NO_SOCKS = True
-import socket
 
 ##########
 
@@ -40,9 +34,10 @@ VERSION = 'v0.8.8'
 siteDict = {
 		''  : '[mf]',
 		'1' : '[mf]',
-		'2' : '[mr]',
-		'3' : '[mp]',
-		'4' : '[mh]'
+		'2' : '[ow]',
+		'3' : '[mr]',
+		'4' : '[mp]',
+		'5' : '[bt]',
 					}
 
 ##########
@@ -81,8 +76,7 @@ def main():
 				timeLogging_FLAG = False,
 				maxChapterThreads = 3,
 				useShortName = False,
-				spaceToken = '.',
-				proxy = None	
+				spaceToken = '.' 
 				)
 				
 	parser.add_option(	'--all', 
@@ -153,11 +147,7 @@ def main():
 	parser.add_option( 	'--spaceToken', 
 				dest = 'spaceToken', 
 				help = 'Specifies the character used to replace spaces in the manga name.'				)				
-	
-	parser.add_option( 	'--proxy', 
-				dest = 'proxy', 
-				help = 'Specifies the proxy.'				)				
-					
+						
 	(options, args) = parser.parse_args()
 	
 	try:
@@ -232,7 +222,7 @@ def main():
 				
 			
 				# site selection
-				print('\nWhich site?\n(1) MangaFox\n(2) MangaReader\n(3) MangaPanda\n(4) MangaHere\n')
+				print('\nWhich site?\n(1) MangaFox\n(2) OtakuWorks\n(3) MangaReader\n(4) MangaPanda\n(5) Batoto\n')
 	
 				# Python3 fix - removal of raw_input()
 				try:
